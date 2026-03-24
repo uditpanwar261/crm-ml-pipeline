@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import pickle
 import pandas as pd
+import os
 
 app = Flask(__name__)
 
@@ -13,13 +14,13 @@ def preprocess_input(data):
     return df[["clicks", "time_spent", "email_opened"]]
 
 
-# ✅ UI Home Page
+# UI Home Page
 @app.route("/")
 def home():
     return render_template("index.html", prediction=None)
 
 
-# ✅ UI Prediction
+# UI Prediction
 @app.route("/predict_ui", methods=["POST"])
 def predict_ui():
     try:
@@ -38,7 +39,7 @@ def predict_ui():
         return str(e)
 
 
-# ✅ API (still works)
+# API
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.json
@@ -48,5 +49,7 @@ def predict():
     return jsonify({"conversion": int(prediction)})
 
 
+# ✅ IMPORTANT FOR RENDER
 if __name__ == "__main__":
-    app.run(debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
